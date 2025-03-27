@@ -105,7 +105,7 @@ def scrape_nts_data():
                     "링크": link
                 })
 
-        print(f"Page {page} crawled, processed {len(rows)} rows.")
+        print(f"국세청 페이지 {page} 크롤링 완료, {len(rows)}개 행 처리됨.")
 
     return data_list
 

@@ -66,7 +66,7 @@ def scrape_moef_data():
                 "날짜": date,
                 "부서명": depart
             })
-        print(f"Page {page} crawled.")
+        print(f"기획재정부 페이지 {page} 크롤링 완료")
     return data_list
 
 if __name__ == "__main__":
