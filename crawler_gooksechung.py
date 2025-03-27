@@ -1,5 +1,6 @@
 # crawler_gooksechung.py
 import requests
+import logging
 from bs4 import BeautifulSoup
 from stqdm import stqdm  # stqdm 임포트
 
@@ -54,7 +55,7 @@ def scrape_nts_data():
 
         response = requests.post(url, data=payload, headers=headers)
         if response.status_code != 200:
-            print(f"Page {page}: HTTP error {response.status_code}")
+            logging.error(f"페이지 {page} 에서 에러 발생: {e}")
             continue
 
         soup = BeautifulSoup(response.text, "html.parser")
@@ -62,22 +63,22 @@ def scrape_nts_data():
         # 페이지 내 게시판 리스트가 들어 있는 컨테이너 (div.bbs_ListA)
         container = soup.find("div", class_="bbs_ListA")
         if not container:
-            print(f"Page {page}: div.bbs_ListA not found")
+            logging.info(f"페이지 {page} 에서 게시판 리스트 영역을 찾을 수 없습니다.")
             continue
 
         table = container.find("table")
         if not table:
-            print(f"Page {page}: table not found")
+            logging.info(f"페이지 {page} 에서 table 영역을 찾을 수 없습니다.")
             continue
 
         tbody = table.find("tbody")
         if not tbody:
-            print(f"Page {page}: tbody not found")
+            logging.info(f"페이지 {page} 에서 tbody 영역을 찾을 수 없습니다.")
             continue
 
         rows = tbody.find_all("tr")
         if not rows:
-            print(f"Page {page}: no rows found")
+            logging.info(f"페이지 {page} 에서 게시글을 찾을 수 없습니다.")
             continue
 
         for row in rows:
@@ -105,7 +106,7 @@ def scrape_nts_data():
                     "링크": link
                 })
 
-        print(f"국세청 페이지 {page} 크롤링 완료, {len(rows)}개 행 처리됨.")
+        logging.info(f"국세청 페이지 {page} 크롤링 완료, {len(rows)}개 행 처리됨.")
 
     return data_list
 

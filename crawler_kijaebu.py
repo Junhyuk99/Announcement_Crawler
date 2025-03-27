@@ -1,6 +1,7 @@
 import re
 import time
 import requests
+import logging
 from bs4 import BeautifulSoup
 
 def scrape_moef_data():
@@ -27,14 +28,14 @@ def scrape_moef_data():
                 response.raise_for_status()  # HTTP 에러 발생 시 예외 처리
                 break  # 성공하면 while 루프 탈출
             except requests.exceptions.RequestException as e:
-                print(f"Page {page} 에서 에러 발생: {e}. 5초 후 재시도합니다.")
+                logging.error(f"페이지 {page} 에서 에러 발생: {e}")
                 time.sleep(5)  # 5초 후 재시도
 
         soup = BeautifulSoup(response.text, "html.parser")
         ul = soup.find("ul", class_="boardType3 mt50")
         if not ul:
             # 공지사항 목록을 찾지 못한 경우 건너뛰지 않고, 재시도 대신 다음 페이지로 진행
-            print(f"Page {page} 에서 공지사항 목록을 찾지 못했습니다.")
+            logging.info(f"페이지 {page} 에서 게시판 리스트 영역을 찾을 수 없습니다.")
             continue
 
         li_elements = ul.find_all("li")
@@ -64,7 +65,7 @@ def scrape_moef_data():
                 "날짜": date,
                 "부서명": depart
             })
-        print(f"기획재정부 페이지 {page} 크롤링 완료")
+        logging.info(f"기획제정부 페이지 {page} 크롤링 완료")
     return data_list
 
 if __name__ == "__main__":

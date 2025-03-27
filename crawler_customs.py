@@ -2,6 +2,7 @@
 import re
 import time
 import requests
+import logging
 from bs4 import BeautifulSoup
 from stqdm import stqdm  # stqdm 임포트
 
@@ -55,7 +56,7 @@ def scrape_customs_data():
             response = requests.post(url, data=payload, headers=headers, timeout=10)
             response.raise_for_status()
         except Exception as e:
-            print(f"페이지 {page} 요청 중 오류 발생: {e}")
+            logging.error(f"페이지 {page} 에서 에러 발생: {e}")
             time.sleep(2)
             continue
 
@@ -63,16 +64,16 @@ def scrape_customs_data():
         # 게시글 리스트가 들어 있는 테이블은 클래스명이 "bbList" 입니다.
         table = soup.find("table", class_="bbsList")
         if not table:
-            print(f"페이지 {page}: 'bbsList' 테이블을 찾지 못했습니다.")
+            logging.info(f"페이지 {page} 에서 게시판 리스트 영역을 찾을 수 없습니다.")
             continue
         tbody = table.find("tbody")
         if not tbody:
-            print(f"페이지 {page}: tbody를 찾지 못했습니다.")
+            logging.info(f"페이지 {page} 에서 tbody 영역을 찾을 수 없습니다.")
             continue
 
         rows = tbody.find_all("tr")
         if not rows:
-            print(f"페이지 {page}: 게시글 행이 없습니다.")
+            logging.info(f"페이지 {page} 에서 게시글을 찾을 수 없습니다.")
             continue
 
         for row in rows:
@@ -106,7 +107,7 @@ def scrape_customs_data():
                     "링크": detail_link
                 })
 
-        print(f"관세청 페이지 {page} 크롤링 완료, {len(rows)}개 행 처리됨.")
+        logging.info(f"관세청 페이지 {page} 크롤링 완료, {len(rows)}개 행 처리됨.")
         # 서버 부하를 줄이기 위해 잠시 대기 (필요 시)
         # time.sleep(0.3)
 

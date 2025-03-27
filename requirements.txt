@@ -4,3 +4,4 @@ stqdm
 requests
 beautifulsoup4
 schedule
+logging

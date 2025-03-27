@@ -1,9 +1,11 @@
 import re
 import time
+import logging
 import requests
 from bs4 import BeautifulSoup
-from stqdm import stqdm
 
+# 로깅 설정: INFO 레벨 이상의 메시지를 콘솔에 출력
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def scrape_pps_data():
     """
@@ -19,7 +21,7 @@ def scrape_pps_data():
     - 등록일: 해당 행의 <td class="normal">의 텍스트
     - 링크: <a href="#none" onclick="goView('2503270008', '0001');"> 에서
              정규표현식으로 첫 번째 인자(key)를 추출하여,
-             상세페이지 URL "https://www.pps.go.kr/kor/bbs/view.do?bbsSn={key}"로 구성합니다.
+             상세페이지 URL "https://www.pps.go.kr/kor/bbs/view.do?bbsSn={key}&key=00641"로 구성합니다.
 
     총 175페이지에 대해 데이터를 수집합니다.
     """
@@ -41,23 +43,23 @@ def scrape_pps_data():
             response = requests.get(url, headers=headers, timeout=10)
             response.raise_for_status()
         except Exception as e:
-            print(f"페이지 {page} 에서 에러 발생: {e}")
+            logging.error(f"페이지 {page} 에서 에러 발생: {e}")
             continue
 
         soup = BeautifulSoup(response.text, "html.parser")
         board_list_div = soup.find("div", class_="board_list")
         if not board_list_div:
-            print(f"페이지 {page} 에서 게시판 리스트 영역을 찾을 수 없습니다.")
+            logging.info(f"페이지 {page} 에서 게시판 리스트 영역을 찾을 수 없습니다.")
             continue
 
         tbody = board_list_div.find("tbody")
         if not tbody:
-            print(f"페이지 {page} 에서 tbody 영역을 찾을 수 없습니다.")
+            logging.info(f"페이지 {page} 에서 tbody 영역을 찾을 수 없습니다.")
             continue
 
         rows = tbody.find_all("tr")
         if not rows:
-            print(f"페이지 {page} 에서 게시글을 찾을 수 없습니다.")
+            logging.info(f"페이지 {page} 에서 게시글을 찾을 수 없습니다.")
             continue
 
         for row in rows:
@@ -93,15 +95,13 @@ def scrape_pps_data():
                 "등록일": reg_date,
                 "링크": link_url
             })
-        print(f"조달청 페이지 {page} 크롤링 완료, {len(rows)}개 행 처리됨.")
-        # 페이지 요청 간 1초 대기 (서버 부담 완화)
-        # time.sleep(0.3)
+        logging.info(f"조달청 페이지 {page} 크롤링 완료, {len(rows)}개 행 처리됨.")
+        # time.sleep(0.3)  # 서버 부담 완화를 위한 대기 (필요시 활성화)
 
     return results
 
-
 if __name__ == "__main__":
     data = scrape_pps_data()
-    print(f"총 항목 수: {len(data)}")
+    logging.info(f"총 항목 수: {len(data)}")
     for item in data[:5]:
-        print(item)
+        logging.info(item)
