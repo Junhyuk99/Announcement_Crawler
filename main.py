@@ -11,7 +11,7 @@ import datetime
 
 
 def main():
-    st.title("공지사항 크롤링 결과")
+    st.title("공공기관 공지사항 모음")
     # stqdm을 활용하여 크롤링 진행 상황을 표시합니다.
     data_tasks = [
         ("moef", load_moef_data),
@@ -19,7 +19,7 @@ def main():
         ("customs", load_customs_data)
     ]
     results = {}
-    for key, task in stqdm(data_tasks, desc="데이터 크롤링 중..."):
+    for key, task in stqdm(data_tasks, desc="데이터 가져오는 중..."):
         results[key] = task()
 
     moef_data = results["moef"]
@@ -27,21 +27,21 @@ def main():
     customs_data = results["customs"]
 
     # 좌측 사이드바 메뉴로 데이터 선택
-    st.sidebar.title("데이터 선택")
-    option = st.sidebar.radio("크롤링 데이터", ("기획재정부 공지사항", "국세청 공지사항", "관세청 공지사항"))
+    st.sidebar.title("기관 선택")
+    option = st.sidebar.radio("크롤링 데이터", ("기획재정부", "국세청", "관세청"))
 
-    if option == "기획재정부 공지사항":
-        st.header("기획재정부 공지사항")
+    if option == "기획재정부":
+        st.header("기획재정부")
         data = moef_data
-    elif option == "국세청 공지사항":
-        st.header("국세청 공지사항")
+    elif option == "국세청":
+        st.header("국세청")
         data = nts_data
     else:
-        st.header("관세청 공지사항")
+        st.header("관세청")
         data = customs_data
 
     if not data:
-        st.write("크롤링된 데이터가 없습니다.")
+        st.write("공지사항 데이터가 없습니다.")
         return
 
     # 표 상단에 검색창을 오른쪽에 배치
@@ -49,7 +49,7 @@ def main():
     with col1:
         st.write("")  # 왼쪽 공간 비워둠
     with col2:
-        search_keyword = st.text_input("제목 검색", "")
+        search_keyword = st.text_input("공지사항 제목 검색", "")
 
     # DataFrame 생성 후 제목 검색어가 있다면 필터링
     df = pd.DataFrame(data)
@@ -94,7 +94,7 @@ def update_data_job():
     load_moef_data.clear()
     load_nts_data.clear()
     load_customs_data.clear()
-    print("데이터 업데이트 작업 실행:", datetime.datetime.now())
+    print("공지사항 업데이트 작업 실행:", datetime.datetime.now())
 
 
 def run_schedule():

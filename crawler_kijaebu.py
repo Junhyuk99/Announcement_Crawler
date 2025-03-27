@@ -19,7 +19,7 @@ def scrape_moef_data():
     }
 
     # 페이지 진행 상황 표시
-    for page in stqdm(range(1, 81), desc="기획재정부 페이지 크롤링 진행"):
+    for page in stqdm(range(1, 81), desc="기획재정부 공지사항 가져오는 중.."):
         url = base_url + str(page)
         while True:
             try:

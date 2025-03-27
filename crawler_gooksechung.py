@@ -47,7 +47,7 @@ def scrape_nts_data():
     }
 
     # 1페이지부터 59페이지까지 순회
-    for page in stqdm(range(1, 60), desc="국세청 페이지 크롤링 진행"):
+    for page in stqdm(range(1, 60), desc="국세청 공지사항 가져오는 중.."):
         # 페이지 번호를 포함한 폼 데이터 준비
         payload = payload_common.copy()
         payload["currPage"] = str(page)
