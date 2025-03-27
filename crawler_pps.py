@@ -34,7 +34,7 @@ def scrape_pps_data():
     results = []
 
     # 1페이지부터 175페이지까지 반복
-    for page in stqdm(range(1, 176), desc="조달청 공지사항 크롤링 진행"):
+    for page in range(1, 176):
         url = f"{base_url}&pageIndex={page}"
 
         try:

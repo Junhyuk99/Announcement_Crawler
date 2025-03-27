@@ -46,7 +46,7 @@ def scrape_customs_data():
     }
 
 
-    for page in stqdm(range(1, 151), desc="관세청 공지사항 가져오는 중.."):
+    for page in range(1, 151):
         # 업데이트된 페이지 번호를 포함한 폼 데이터 준비
         payload = payload_common.copy()
         payload["currPage"] = str(page)

@@ -2,7 +2,6 @@ import re
 import time
 import requests
 from bs4 import BeautifulSoup
-from stqdm import stqdm  # stqdm 임포트
 
 def scrape_moef_data():
     """
@@ -18,8 +17,8 @@ def scrape_moef_data():
         )
     }
 
-    # 페이지 진행 상황 표시
-    for page in stqdm(range(1, 81), desc="기획재정부 공지사항 가져오는 중.."):
+    # 페이지 진행
+    for page in range(1, 81):
         url = base_url + str(page)
         while True:
             try:
@@ -39,8 +38,7 @@ def scrape_moef_data():
             continue
 
         li_elements = ul.find_all("li")
-        # 각 페이지 내 공지사항 진행 상황 표시 (내부 진행바는 leave=False로 설정)
-        for li in stqdm(li_elements, desc=f"페이지 {page} - 공지사항 처리", leave=False):
+        for li in li_elements:
             a_tag = li.find("h3").find("a")
             title = a_tag.get_text(strip=True)
             link = a_tag.get("href")

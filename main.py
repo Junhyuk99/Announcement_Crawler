@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from stqdm import stqdm
 from crawler_kijaebu import scrape_moef_data
 from crawler_gooksechung import scrape_nts_data
 from crawler_customs import scrape_customs_data
@@ -13,16 +12,18 @@ import datetime
 
 def main():
     st.title("공공기관 공지사항 모음")
-    # stqdm을 활용하여 크롤링 진행 상황을 표시합니다.
+
     data_tasks = [
         ("moef", load_moef_data),
         ("nts", load_nts_data),
         ("customs", load_customs_data),
         ("pps", load_pps_data)
     ]
+
     results = {}
-    for key, task in stqdm(data_tasks, desc="데이터 가져오는 중..."):
-        results[key] = task()
+    with st.spinner("데이터 가져오는 중..."):
+        for key, task in data_tasks:
+            results[key] = task()
 
     moef_data = results["moef"]
     nts_data = results["nts"]
@@ -90,6 +91,7 @@ def load_nts_data():
 @st.cache_data(show_spinner=False)
 def load_customs_data():
     return scrape_customs_data()
+
 
 @st.cache_data(show_spinner=False)
 def load_pps_data():
