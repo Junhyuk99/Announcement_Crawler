@@ -1,0 +1,6 @@
+streamlit
+pandas
+stqdm
+requests
+beautifulsoup4
+schedule
