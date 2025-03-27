@@ -4,6 +4,7 @@ from stqdm import stqdm
 from crawler_kijaebu import scrape_moef_data
 from crawler_gooksechung import scrape_nts_data
 from crawler_customs import scrape_customs_data
+from crawler_pps import scrape_pps_data
 import threading
 import schedule
 import time
@@ -16,7 +17,8 @@ def main():
     data_tasks = [
         ("moef", load_moef_data),
         ("nts", load_nts_data),
-        ("customs", load_customs_data)
+        ("customs", load_customs_data),
+        ("pps", load_pps_data)
     ]
     results = {}
     for key, task in stqdm(data_tasks, desc="데이터 가져오는 중..."):
@@ -25,10 +27,11 @@ def main():
     moef_data = results["moef"]
     nts_data = results["nts"]
     customs_data = results["customs"]
+    pps_data = results["pps"]
 
     # 좌측 사이드바 메뉴로 데이터 선택
     st.sidebar.title("기관 선택")
-    option = st.sidebar.radio("공지사항 데이터", ("기획재정부", "국세청", "관세청"))
+    option = st.sidebar.radio("공지사항 데이터", ("기획재정부", "국세청", "관세청", "조달청"))
 
     if option == "기획재정부":
         st.header("기획재정부")
@@ -36,9 +39,12 @@ def main():
     elif option == "국세청":
         st.header("국세청")
         data = nts_data
-    else:
+    elif option == "관세청":
         st.header("관세청")
         data = customs_data
+    else:
+        st.header("조달청")
+        data = pps_data
 
     if not data:
         st.write("공지사항 데이터가 없습니다.")
@@ -85,6 +91,10 @@ def load_nts_data():
 def load_customs_data():
     return scrape_customs_data()
 
+@st.cache_data(show_spinner=False)
+def load_pps_data():
+    return scrape_pps_data()
+
 
 def update_data_job():
     """
@@ -94,6 +104,7 @@ def update_data_job():
     load_moef_data.clear()
     load_nts_data.clear()
     load_customs_data.clear()
+    load_pps_data.clear()
     print("공지사항 업데이트 작업 실행:", datetime.datetime.now())
 
 

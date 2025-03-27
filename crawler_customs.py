@@ -108,7 +108,7 @@ def scrape_customs_data():
 
         print(f"관세청 페이지 {page} 크롤링 완료, {len(rows)}개 행 처리됨.")
         # 서버 부하를 줄이기 위해 잠시 대기 (필요 시)
-        time.sleep(0.5)
+        # time.sleep(0.3)
 
     return data_list
 
