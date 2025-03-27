@@ -28,7 +28,7 @@ def main():
 
     # 좌측 사이드바 메뉴로 데이터 선택
     st.sidebar.title("기관 선택")
-    option = st.sidebar.radio("크롤링 데이터", ("기획재정부", "국세청", "관세청"))
+    option = st.sidebar.radio("공지사항 데이터", ("기획재정부", "국세청", "관세청"))
 
     if option == "기획재정부":
         st.header("기획재정부")
