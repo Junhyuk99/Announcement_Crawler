@@ -102,7 +102,7 @@ def scrape_nts_data():
             if title:
                 data_list.append({
                     "제목": title,
-                    "작성일자": date_text,
+                    "등록일": date_text,
                     "링크": link
                 })
 

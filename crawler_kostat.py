@@ -106,7 +106,7 @@ def scrape_kostat_data():
                 "링크": link_url
             })
 
-        logging.info(f"페이지 {page} 크롤링 완료, 총 {len(results)}개 행 처리됨.")
+        logging.info(f"통계청 페이지 {page} 크롤링 완료, 총 {len(results)}개 행 처리됨.")
 
     logging.info(f"총 {len(results)}개의 게시글 크롤링 완료.")
     return results

@@ -79,6 +79,20 @@ def main():
     # 표에서 "링크" 컬럼은 제거
     df.drop(columns=["링크"], inplace=True)
 
+    # CSS 스타일 추가: 전체 테이블 스타일 및 두 번째 열(등록일)의 최소 너비 지정
+    style = """
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table td:nth-child(2) {
+            min-width: 120px;
+        }
+    </style>
+    """
+    st.markdown(style, unsafe_allow_html=True)
+
     # 전체 테이블을 스크롤 가능한 영역에 표시 (최대 높이 600px)
     table_html = df.to_html(escape=False, index=False)
     st.markdown(f'<div style="max-height:600px; overflow-y:auto;">{table_html}</div>', unsafe_allow_html=True)
@@ -102,6 +116,7 @@ def load_customs_data():
 @st.cache_data(show_spinner=False)
 def load_pps_data():
     return scrape_pps_data()
+
 
 @st.cache_data(show_spinner=False)
 def load_kostat_data():

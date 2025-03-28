@@ -62,7 +62,7 @@ def scrape_moef_data():
             data_list.append({
                 "제목": title,
                 "링크": link,
-                "날짜": date,
+                "등록일": date,
                 "부서명": depart
             })
         logging.info(f"기획재정부 페이지 {page} 크롤링 완료")
