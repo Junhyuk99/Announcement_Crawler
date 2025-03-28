@@ -1,4 +1,3 @@
-# crawler_customs.py
 import re
 import time
 import requests
@@ -6,6 +5,7 @@ import logging
 from bs4 import BeautifulSoup
 from stqdm import stqdm  # stqdm 임포트
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def scrape_customs_data():
     """
@@ -46,18 +46,24 @@ def scrape_customs_data():
         "Referer": "https://www.customs.go.kr/kcs/na/ntt/selectNttList.do?mi=2889&bbsId=1341"
     }
 
-
     for page in range(1, 151):
         # 업데이트된 페이지 번호를 포함한 폼 데이터 준비
         payload = payload_common.copy()
         payload["currPage"] = str(page)
 
-        try:
-            response = requests.post(url, data=payload, headers=headers, timeout=10)
-            response.raise_for_status()
-        except Exception as e:
-            logging.error(f"페이지 {page} 에서 에러 발생: {e}")
-            time.sleep(2)
+        max_retries = 5
+        retry_count = 0
+        while retry_count < max_retries:
+            try:
+                response = requests.post(url, data=payload, headers=headers, timeout=10)
+                response.raise_for_status()
+                break  # 성공 시 while 루프 탈출
+            except Exception as e:
+                retry_count += 1
+                logging.error(f"페이지 {page} 에서 에러 발생: {e}. 재시도 {retry_count}/{max_retries}")
+                time.sleep(2)
+        if retry_count == max_retries:
+            logging.error(f"페이지 {page} 을(를) {max_retries}회 재시도 후 실패하여 넘어갑니다.")
             continue
 
         soup = BeautifulSoup(response.text, "html.parser")
@@ -116,6 +122,6 @@ def scrape_customs_data():
 
 if __name__ == "__main__":
     results = scrape_customs_data()
-    print("총 항목 수:", len(results))
+    logging.info(f"총 항목 수: {len(results)}")
     for item in results[:5]:
-        print(item)
+        logging.info(item)

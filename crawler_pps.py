@@ -18,7 +18,7 @@ def scrape_pps_data():
     각 게시글은 <div class="board_list"> 내부 <tbody>의 <tr> 요소에 위치합니다.
 
     - 제목: <td class="title" style="text-align:left;"> 내부의 <div class="viewbox">의 텍스트
-    - 등록일: 해당 행의 <td class="normal">의 텍스트
+    - 등록일: 각 행의 5번째 <td> 요소의 텍스트
     - 링크: <a href="#none" onclick="goView('2503270008', '0001');"> 에서
              정규표현식으로 첫 번째 인자(key)를 추출하여,
              상세페이지 URL "https://www.pps.go.kr/kor/bbs/view.do?bbsSn={key}&key=00641"로 구성합니다.
@@ -73,15 +73,18 @@ def scrape_pps_data():
             else:
                 title_text = title_td.get_text(strip=True)
 
-            # 등록일 추출
-            normal_td = row.find("td", class_="normal")
-            reg_date = normal_td.get_text(strip=True) if normal_td else ""
+            # 등록일 추출: 각 행의 5번째 <td> 요소에서 가져오기
+            tds = row.find_all("td")
+            if len(tds) >= 5:
+                reg_date = tds[4].get_text(strip=True)
+            else:
+                reg_date = ""
 
             # 링크 추출: onclick 속성에서 goView('키', 'stype') 형식으로 추출
             a_tag = title_td.find("a")
             if a_tag:
                 onclick_attr = a_tag.get("onclick", "")
-                match = re.search(r"goView\('([^']+)',\s*'([^']+)'\)", onclick_attr)
+                match = re.search(r"goView\('([^']+)',\s*'([^']*)'\)", onclick_attr)
                 if match:
                     key_val = match.group(1)
                     link_url = f"https://www.pps.go.kr/kor/bbs/view.do?bbsSn={key_val}&key=00641"

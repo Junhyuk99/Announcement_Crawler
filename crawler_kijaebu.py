@@ -65,7 +65,7 @@ def scrape_moef_data():
                 "날짜": date,
                 "부서명": depart
             })
-        logging.info(f"기획제정부 페이지 {page} 크롤링 완료")
+        logging.info(f"기획재정부 페이지 {page} 크롤링 완료")
     return data_list
 
 if __name__ == "__main__":

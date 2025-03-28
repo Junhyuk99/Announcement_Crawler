@@ -4,6 +4,7 @@ from crawler_kijaebu import scrape_moef_data
 from crawler_gooksechung import scrape_nts_data
 from crawler_customs import scrape_customs_data
 from crawler_pps import scrape_pps_data
+from crawler_kostat import scrape_kostat_data
 import threading
 import schedule
 import time
@@ -17,11 +18,12 @@ def main():
         ("moef", load_moef_data),
         ("nts", load_nts_data),
         ("customs", load_customs_data),
-        ("pps", load_pps_data)
+        ("pps", load_pps_data),
+        ("kostat", load_kostat_data)
     ]
 
     results = {}
-    with st.spinner("데이터 가져오는 중..."):
+    with st.spinner("데이터 가져오는 중... 시간이 좀 소요될 수 있습니다"):
         for key, task in data_tasks:
             results[key] = task()
 
@@ -29,10 +31,11 @@ def main():
     nts_data = results["nts"]
     customs_data = results["customs"]
     pps_data = results["pps"]
+    kostat_data = results["kostat"]
 
     # 좌측 사이드바 메뉴로 데이터 선택
     st.sidebar.title("기관 선택")
-    option = st.sidebar.radio("공지사항 데이터", ("기획재정부", "국세청", "관세청", "조달청"))
+    option = st.sidebar.radio("공지사항 데이터", ("기획재정부", "국세청", "관세청", "조달청", "통계청"))
 
     if option == "기획재정부":
         st.header("기획재정부")
@@ -43,9 +46,12 @@ def main():
     elif option == "관세청":
         st.header("관세청")
         data = customs_data
-    else:
+    elif option == "조달청":
         st.header("조달청")
         data = pps_data
+    else:
+        st.header("통계청")
+        data = kostat_data
 
     if not data:
         st.write("공지사항 데이터가 없습니다.")
@@ -97,6 +103,10 @@ def load_customs_data():
 def load_pps_data():
     return scrape_pps_data()
 
+@st.cache_data(show_spinner=False)
+def load_kostat_data():
+    return scrape_kostat_data()
+
 
 def update_data_job():
     """
@@ -107,6 +117,7 @@ def update_data_job():
     load_nts_data.clear()
     load_customs_data.clear()
     load_pps_data.clear()
+    load_kostat_data.clear()
     print("공지사항 업데이트 작업 실행:", datetime.datetime.now())
 
 
